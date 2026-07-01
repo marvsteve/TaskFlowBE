@@ -1,6 +1,9 @@
 import pool from "./config/database.js";
 import express from "express";
 import dotenv from "dotenv";
+import authRoutes from "./routes/authRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 
 import taskRoutes from "./routes/taskRoutes.js";
 
@@ -15,6 +18,9 @@ app.use(express.json());
 
 // Route
 app.use("/api/tasks", taskRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // Route utama
 app.get("/", (req, res) => {

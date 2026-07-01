@@ -1,9 +1,22 @@
-import * as taskService from "../services/TaskService.js";
+import {
+    getAllTasks,
+    getTaskById,
+    createTask,
+    updateTask,
+    deleteTask
+} from "../services/TaskService.js";
 
-// Mengambil semua task
-export const getAllTasks = async (req, res) => {
+/**
+ * ==========================================
+ * GET /api/tasks
+ * Mengambil seluruh data task
+ * ==========================================
+ */
+export const getTasks = async (req, res) => {
+
     try {
-        const tasks = await taskService.getAllTasks();
+
+        const tasks = await getAllTasks();
 
         res.status(200).json({
             success: true,
@@ -19,19 +32,29 @@ export const getAllTasks = async (req, res) => {
         });
 
     }
+
 };
 
-export const getTaskById = async (req, res) => {
+
+/**
+ * ==========================================
+ * GET /api/tasks/:id
+ * Mengambil task berdasarkan ID
+ * ==========================================
+ */
+export const getTask = async (req, res) => {
 
     try {
 
-        const task = await taskService.getTaskById(req.params.id);
+        const task = await getTaskById(req.params.id);
 
         if (!task) {
+
             return res.status(404).json({
                 success: false,
                 message: "Task tidak ditemukan"
             });
+
         }
 
         res.status(200).json({
@@ -50,16 +73,28 @@ export const getTaskById = async (req, res) => {
 
 };
 
-// Menambahkan task baru
-export const createTask = async (req, res) => {
+
+/**
+ * ==========================================
+ * POST /api/tasks
+ * Menambahkan task baru
+ * ==========================================
+ */
+export const createNewTask = async (req, res) => {
+
     try {
 
-        const result = await taskService.createTask(req.body);
+        const task = {
+            ...req.body,
+            user_id: req.user.id
+        };
+
+        const result = await createTask(task);
 
         res.status(201).json({
             success: true,
             message: "Task berhasil ditambahkan",
-            id: result.insertId
+            taskId: result.insertId
         });
 
     } catch (error) {
@@ -70,13 +105,21 @@ export const createTask = async (req, res) => {
         });
 
     }
+
 };
 
-export const updateTask = async (req, res) => {
+
+/**
+ * ==========================================
+ * PUT /api/tasks/:id
+ * Mengubah task
+ * ==========================================
+ */
+export const updateTaskById = async (req, res) => {
 
     try {
 
-        const result = await taskService.updateTask(
+        const result = await updateTask(
             req.params.id,
             req.body
         );
@@ -106,17 +149,26 @@ export const updateTask = async (req, res) => {
 
 };
 
-export const deleteTask = async (req, res) => {
+
+/**
+ * ==========================================
+ * DELETE /api/tasks/:id
+ * Menghapus task
+ * ==========================================
+ */
+export const deleteTaskById = async (req, res) => {
 
     try {
 
-        const result = await taskService.deleteTask(req.params.id);
+        const result = await deleteTask(req.params.id);
 
         if (result.affectedRows === 0) {
+
             return res.status(404).json({
                 success: false,
                 message: "Task tidak ditemukan"
             });
+
         }
 
         res.status(200).json({
